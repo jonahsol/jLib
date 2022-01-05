@@ -1,12 +1,13 @@
 {
   "name": "jLib",
   "version": "1.0.0",
-  "description": "Can log \"hello world\" and \"goodbye world\" to the console!",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "files": [
     "/dist"
   ],
+	"scripts": {
+		"prepare": "tsc",
+		"build": "tsc && yarn pack --out /artifacts/%s-%v.tgz"
+	},
   "dependencies": {
     "@types/lodash": "^4.14.178",
     "dayjs": "^1.10.7",
