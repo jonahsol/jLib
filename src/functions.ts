@@ -75,6 +75,7 @@ export function diff(
  * sets.
  */
 export function shallowEq(x: any, y: any) {
+  if (isUndef(x) && isUndef(y)) return true;
   if (dayjs.isDayjs(x) || dayjs.isDayjs(y))
     return dayjs.isDayjs(x) && dayjs.isDayjs(y)
       ? x.toISOString() === y.toISOString()
@@ -84,6 +85,18 @@ export function shallowEq(x: any, y: any) {
   }
 
   return isEqual(x, y);
+
+  function isUndef(z: any) {
+    return z === undefined || z === null;
+  }
+}
+
+export function shallowDiff(
+  object: Dict<any>,
+  base: object,
+  ignoreRecurse?: (key: string, value: any) => boolean
+) {
+  return diff(object, base, shallowEq, (() => true) || ignoreRecurse);
 }
 
 /**
