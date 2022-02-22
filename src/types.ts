@@ -2,40 +2,40 @@
  * Useful types.
  */
 
-export type ValueOf<T> = T[keyof T]
-export type Dict<V> = Record<string, V>
-export type StringMap<K extends keyof any> = Record<K, string>
-export type Nullable<T> = T | null
-export type KeysEnum<T> = { [P in keyof Required<T>]: P }
+export type ValueOf<T> = T[keyof T];
+export type Dict<V> = Record<string, V>;
+export type StringMap<K extends keyof any> = Record<K, string>;
+export type Nullable<T> = T | null;
+export type KeysEnum<T> = { [P in keyof Required<T>]: P };
 
-export type Id = string
-export type IdMap<T> = Record<Id, T>
-type IdType = "id"
-export type OmitId<T> = Omit<T, IdType>
-export type WithId<TObj = {}, TId = string> = TObj & { id: TId }
-export type WithOptId = Partial<WithId>
-export type OnlyId<TObj = {}, TId = string> = Partial<TObj> & { id: TId }
+export type Id = string;
+export type IdMap<T> = Record<Id, T>;
+type IdType = "id";
+export type OmitId<T> = Omit<T, IdType>;
+export type WithId<TObj = {}, TId = string> = TObj & { id: TId };
+export type WithOptId<TObj = {}, TId = string> = TObj & { id?: TId };
+export type OnlyId<TObj = {}, TId = string> = Partial<TObj> & { id: TId };
 
-export const keyType = "key"
-type KeyType = "key"
-export type WithKey<TObj = {}, TKey = string> = TObj & { key: TKey }
-export type WithoutKey<T> = Omit<T, KeyType>
+export const keyType = "key";
+type KeyType = "key";
+export type WithKey<TObj = {}, TKey = string> = TObj & { key: TKey };
+export type WithoutKey<T> = Omit<T, KeyType>;
 
-export type Falsey = null | undefined
-export type OptionalProps<T, K extends keyof T> = Partial<T> & Omit<T, K>
+export type Falsey = null | undefined;
+export type OptionalProps<T, K extends keyof T> = Partial<T> & Omit<T, K>;
 // Require a types property.
 // With thanks:
 // https://stackoverflow.com/a/63664560
-export type RequireProps<T, K extends keyof T> = T & Required<Pick<T, K>>
+export type RequireProps<T, K extends keyof T> = T & Required<Pick<T, K>>;
 export interface WithLoading {
-	loading?: boolean
+  loading?: boolean;
 }
-export type MutationType = "post" | "delete" | "patch"
+export type MutationType = "post" | "delete" | "patch";
 
 /**
  * Type declarations.
  */
-export const isString = (x: any): x is string => typeof x === "string"
+export const isString = (x: any): x is string => typeof x === "string";
 
 /**
  * With thanks:
@@ -58,21 +58,21 @@ export const isString = (x: any): x is string => typeof x === "string"
 //     t: T & CheckMissing<T, S> & CheckDuplicate<T>): T {
 //     return t
 // }
-export const createKeys = <T>(x: (keyof T)[]) => x
+export const createKeys = <T>(x: (keyof T)[]) => x;
 
 /**
  * With thanks: https://stackoverflow.com/a/57683652
  */
 // expands object types one level deep
-export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never
+export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
 // expands object types recursively
 export type ExpandRecursively<T> = T extends object
-	? T extends infer O
-		? { [K in keyof O]: ExpandRecursively<O[K]> }
-		: never
-	: T
+  ? T extends infer O
+    ? { [K in keyof O]: ExpandRecursively<O[K]> }
+    : never
+  : T;
 
-export type UnionKeys<T> = T extends any ? keyof T : never
+export type UnionKeys<T> = T extends any ? keyof T : never;
 export type DistributivePick<T, K extends UnionKeys<T>> = T extends any
-	? Pick<T, Extract<keyof T, K>>
-	: never
+  ? Pick<T, Extract<keyof T, K>>
+  : never;
