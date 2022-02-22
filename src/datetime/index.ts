@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import weekday from "dayjs/plugin/weekday";
 dayjs.extend(customParseFormat);
+dayjs.extend(weekday);
 import intersectionWith from "lodash/intersectionWith";
 import differenceWith from "lodash/differenceWith";
 import unionWith from "lodash/unionWith";
@@ -55,14 +57,18 @@ export function displayDate(
         return dayjs(date).format(`DD${sep}MM${sep}YY`);
       case "LongDateWithYear":
         return dayjs(date).format("Do MMM, YY");
-      case "DayWithLongDate":
-        const d1 = dayjs(date);
-        const dateStr1 = d1.format("Do MMM, YY");
 
-        const dayStr = getDayStr(d1);
+      // SOMEDAY Dayjs `dddd` (eg. Thursday) gives one day later than `ddd`.
+      // Perhaps a timezone issue? Not sure
+      //
+      //   case "DayWithLongDate":
+      //     const d1 = dayjs(date);
+      //     const dateStr1 = d1.format("Do MMM, YY");
 
-        if (dayStr === todayStr) return `${getDayStr(d1)} - ${dateStr1}`;
-        else return `${getDayStr(d1)} ${dateStr1}`;
+      //     const dayStr = getDayStr(d1);
+
+      //     if (dayStr === todayStr) return `${getDayStr(d1)} - ${dateStr1}`;
+      //     else return `${getDayStr(d1)} ${dateStr1}`;
 
       case "DayWithDate":
         const d = dayjs(date);
@@ -73,7 +79,7 @@ export function displayDate(
         const d3 = dayjs(date);
         const dateStr3 = d3.format(`DD${sep}MM${sep}YY`);
 
-        return `${getDayStr(d3, false, "dd")} ${dateStr3}`;
+        return `${getDayStr(d3, false, "ddd")} ${dateStr3}`;
       case "BracketedDayWithDate":
         const d2 = dayjs(date);
         const dateStr2 = d2.format(`DD${sep}MM${sep}YY`);
@@ -93,7 +99,7 @@ export function displayDate(
   ) {
     let dayStr;
     if (isToday(d)) dayStr = lowerToday ? lowercaseFirst(todayStr) : todayStr;
-    else dayStr = d.format(format || "dddd");
+    else dayStr = d.format(format || "ddd");
 
     return dayStr;
   }
@@ -237,6 +243,10 @@ export function throwIfNotAfter(d1: Dayjs, d2: Dayjs) {
 }
 
 export const compareDates = (d1: Dayjs, d2: Dayjs) => d1.diff(d2);
+export const diffByTimeOfDay = (d1: Dayjs, d2: Dayjs) =>
+  addTimeOfDay(todayDayjs, d1).diff(addTimeOfDay(todayDayjs, d2));
+export const diffByDate = (d1: Dayjs, d2: Dayjs) =>
+  d1.startOf("day").diff(d2.startOf("day"));
 
 // Intersection of two sets of dates.
 export const intersectDates = (xs: Dayjs[], ys: Dayjs[]) =>
@@ -255,3 +265,10 @@ export const unionDatesByDate = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
 // Difference of two sets of dates.
 export const diffDates = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
   differenceWith(xs, ys, (x, y) => !compareDates(x, y));
+
+export function mondayOfWeek(d: Dayjs) {
+  return d.weekday(0);
+}
+export function sundayOfWeek(d: Dayjs) {
+  return d.weekday(7);
+}
