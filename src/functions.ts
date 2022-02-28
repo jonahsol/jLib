@@ -182,8 +182,10 @@ export function boolXor(x: any, y: any) {
   return !!x !== !!y;
 }
 
+export const entriesWithDefinedVal = <T extends object = object>(o: T) =>
+  pickBy(o, (x) => x);
 export function hasDefinedEntries(o: object) {
-  return !isEmpty(pickBy(o, (x) => x));
+  return !isEmpty(entriesWithDefinedVal(o));
 }
 
 /** Cycle `permutation` at index `i` */
