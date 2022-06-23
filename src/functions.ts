@@ -1,3 +1,4 @@
+import { ValueIteratee, List } from "lodash";
 import transform from "lodash/transform";
 import omit from "lodash/omit";
 import isEqual from "lodash/isEqual";
@@ -8,6 +9,8 @@ import xorWith from "lodash/xorWith";
 import isEmpty from "lodash/isEmpty";
 import intersectionWith from "lodash/intersectionWith";
 import uniqBy from "lodash/fp/uniqBy";
+import groupBy from "lodash/fp/groupBy";
+import { LodashGroupBy1x1 } from "lodash/fp";
 import { keyType, Dict, WithId, WithOptId } from "./types";
 import dayjs from "dayjs";
 import { throwDevError } from "./nativeJs";
@@ -208,3 +211,15 @@ export function setsEq<T>(s1: Set<T>, s2: Set<T>) {
 export const nonEmptyDiff = (x, y) => !isEmpty(diff(x, y));
 
 export const omitKey = (x) => omit(x, keyType);
+
+export const getCompareOn = <C>(f: (c: C) => string) => (c1: C, c2: C) =>
+  f(c1).localeCompare(f(c2));
+
+export const defineKeysAndGroupBy = <K extends string, T>(
+  keys: K[],
+  f: ValueIteratee<T>
+) => (x: List<T> | object) =>
+  ({
+    ...keys.reduce((acc, k) => ({ ...acc, [k]: [] }), {}),
+    ...groupBy(f)(x),
+  } as Record<K, T[]>);

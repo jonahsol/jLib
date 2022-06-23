@@ -21,8 +21,14 @@ export const stringsEq = (s1: string | undefined, s2: string | undefined) =>
  */
 export function pluralise(str: string) {
   if (str[str.length - 1] === "s") return str;
-  if (str[str.length - 1] === "y") return `${str.slice(0, str.length - 1)}ies`;
-  else return `${str}s`;
+  if (str[str.length - 1] === "y") {
+    // Pathological input
+    if (str.length === 1) return `${str}s`;
+    // Spelling rule:
+    // https://www.teachstarter.com/au/teaching-resource/rules-for-plurals-s-es-ies-ves/
+    if (vowels.has(str[str.length - 2])) return `${str}s`;
+    else return `${str.slice(0, str.length - 1)}ies`;
+  } else return `${str}s`;
 }
 export function pluraliseIfMany(str: string, xs: any[]) {
   if (xs.length > 1) return pluralise(str);

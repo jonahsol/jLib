@@ -1,4 +1,4 @@
-import { SetState, GetState } from "zustand";
+import { SetState, GetState, StateCreator } from "zustand";
 import { produce } from "immer";
 
 export type StateUpdaterFunc<S> = (prevState: S) => S;
@@ -26,11 +26,17 @@ export type ResettableStore<Store> = Store & { reset: () => void };
 export function createResettableInitState<Store extends object>(
   getInitState: (set: SetState<Store>, get: GetState<Store>) => Store
 ) {
-  return (
+  const f: StateCreator<
+    ResettableStore<Store>,
+    SetState<ResettableStore<Store>>,
+    GetState<ResettableStore<Store>>,
+    any
+  > = (
     set: SetState<ResettableStore<Store>>,
     get: GetState<ResettableStore<Store>>
   ): ResettableStore<Store> => ({
     ...getInitState(set, get),
     reset: () => set(getInitState(set, get)),
   });
+  return f;
 }

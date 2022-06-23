@@ -29,7 +29,8 @@ export type DateDisplayFormat =
   | "DayWithDate"
   | "DayWithLongDate"
   | "BracketedDayWithDate"
-  | "ShortDayWithDate";
+  | "ShortDayWithDate"
+  | "Time";
 
 const todayStr = "Today";
 
@@ -85,6 +86,8 @@ export function displayDate(
         const dateStr2 = d2.format(`DD${sep}MM${sep}YY`);
 
         return `${dateStr2} (${getDayStr(d2, true)})`;
+      case "Time":
+        return dayjs(date).format("hh:mma");
     }
   } else
     return displayDate(date, {
@@ -267,8 +270,20 @@ export const diffDates = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
   differenceWith(xs, ys, (x, y) => !compareDates(x, y));
 
 export function mondayOfWeek(d: Dayjs) {
-  return d.weekday(0);
+  return d.weekday(1);
 }
 export function sundayOfWeek(d: Dayjs) {
   return d.weekday(7);
+}
+
+export function occursWithinTimeWindow(x: {
+  windowStart: Dayjs;
+  windowEnd: Dayjs;
+  candidateStart: Dayjs;
+  candidateEnd: Dayjs;
+}) {
+  return (
+    x.candidateStart.isBefore(x.windowEnd) &&
+    x.candidateEnd.isAfter(x.windowStart)
+  );
 }
