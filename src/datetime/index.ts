@@ -269,13 +269,6 @@ export const unionDatesByDate = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
 export const diffDates = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
   differenceWith(xs, ys, (x, y) => !compareDates(x, y));
 
-export function mondayOfWeek(d: Dayjs) {
-  return d.weekday(1);
-}
-export function sundayOfWeek(d: Dayjs) {
-  return d.weekday(7);
-}
-
 export function occursWithinTimeWindow(x: {
   windowStart: Dayjs;
   windowEnd: Dayjs;
@@ -286,4 +279,23 @@ export function occursWithinTimeWindow(x: {
     x.candidateStart.isBefore(x.windowEnd) &&
     x.candidateEnd.isAfter(x.windowStart)
   );
+}
+
+export function mondayOfWeek(d: Dayjs) {
+  return d.weekday(1);
+}
+export function sundayOfWeek(d: Dayjs) {
+  return d.weekday(7);
+}
+
+export function listOfDatesBetween(start: Dayjs, end: Dayjs) {
+  let cur = start;
+
+  const res: Dayjs[] = [];
+  while (cur.isBefore(end) || cur.isSame(end)) {
+    res.push(dayjs(cur));
+    cur = cur.add(1, "day");
+  }
+
+  return res;
 }
