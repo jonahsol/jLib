@@ -129,23 +129,27 @@ export function displayDateRangeF(
 }
 
 export function displayDateRange(
-  start?: Dayjs,
-  finish?: Dayjs,
+  start?: DateArg,
+  finish?: DateArg,
   format?: { start: string; end: string }
 ) {
   let startStr = "?";
   let finishStr = "?";
 
-  // If both am/pm, only show am/pm on the finish time
-  const showAmOrPmOnStartTime = start.format("a") !== finish.format("a");
+  const startDayjs = toDayjs(start);
+  const finishDayjs = toDayjs(finish);
 
-  if (start !== undefined) {
-    startStr = start.format(
+  // If both am/pm, only show am/pm on the finish time
+  const showAmOrPmOnStartTime =
+    startDayjs.format("a") !== finishDayjs.format("a");
+
+  if (startDayjs !== undefined) {
+    startStr = startDayjs.format(
       format ? format.start : `h:mm${showAmOrPmOnStartTime ? "a" : ""}`
     );
   }
-  if (finish !== undefined) {
-    finishStr = finish.format(format ? format.end : "h:mma");
+  if (finishDayjs !== undefined) {
+    finishStr = finishDayjs.format(format ? format.end : "h:mma");
   }
 
   return startStr + " - " + finishStr;
@@ -197,15 +201,16 @@ export function isToday(m: Dayjs) {
   return m.startOf("day").diff(todayDayjs) === 0;
 }
 
-export function datetimeEqual(d1: string | Dayjs, d2: string | Dayjs) {
-  const d1d = typeof d1 === "string" ? dayjs(d1) : d1;
-  const d2d = typeof d2 === "string" ? dayjs(d2) : d2;
+export function datetimeEqual(d1: DateArg, d2: DateArg) {
+  const d1d = toDayjs(d1);
+  const d2d = toDayjs(d2);
 
   return d1d.diff(d2d);
 }
-export function timeEqual(d1: string | Dayjs, d2: string | Dayjs) {
-  const d1d = typeof d1 === "string" ? dayjs(d1) : d1;
-  const d2d = typeof d2 === "string" ? dayjs(d2) : d2;
+// Assumes `d1` and `d2` have the same utc offset
+export function timeEqual(d1: DateArg, d2: DateArg) {
+  const d1d = toDayjs(d1);
+  const d2d = toDayjs(d2);
 
   return (
     d1d.hour() === d2d.hour() &&
@@ -214,9 +219,10 @@ export function timeEqual(d1: string | Dayjs, d2: string | Dayjs) {
   );
 }
 
-export function dayEqual(d1: string | Dayjs, d2: string | Dayjs) {
-  const d1d = typeof d1 === "string" ? dateStringToDayjs(d1) : d1;
-  const d2d = typeof d2 === "string" ? dateStringToDayjs(d2) : d2;
+// Assumes `d1` and `d2` have the same utc offset
+export function dayEqual(d1: DateArg, d2: DateArg) {
+  const d1d = toDayjs(d1);
+  const d2d = toDayjs(d2);
 
   return d1d.startOf("day").isSame(d2d.startOf("day"));
 }
@@ -225,13 +231,13 @@ export function isBetweenDates(
   start: string | Dayjs,
   end: string | Dayjs
 ) {
-  const cDate = typeof date === "string" ? dateStringToDayjs(date) : date;
-  const dStart = typeof start === "string" ? dateStringToDayjs(start) : start;
-  const dEnd = typeof end === "string" ? dateStringToDayjs(end) : end;
+  const dDate = toDayjs(date);
+  const dStart = toDayjs(start);
+  const dEnd = toDayjs(end);
 
   return (
-    (dayEqual(date, start) || dStart.isBefore(date)) &&
-    (dayEqual(date, end) || dEnd.isAfter(date))
+    (dayEqual(dDate, dDate) || dStart.isBefore(dDate)) &&
+    (dayEqual(dDate, dEnd) || dEnd.isAfter(dDate))
   );
 }
 
