@@ -21,7 +21,9 @@ type KeyType = "key";
 export type WithKey<TObj = {}, TKey = string> = TObj & { key: TKey };
 export type WithoutKey<T> = Omit<T, KeyType>;
 
-export type Falsey = null | undefined;
+export type Falsey = null | undefined | false;
+export type MaybeFalsey<T> = T | Falsey;
+export type MaybeDefined<T> = T | undefined | null;
 export type OptionalProps<T, K extends keyof T> = Partial<T> & Omit<T, K>;
 // Require a types property.
 // With thanks:

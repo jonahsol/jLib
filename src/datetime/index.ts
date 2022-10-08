@@ -1,8 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import weekday from "dayjs/plugin/weekday";
 dayjs.extend(customParseFormat);
+import weekday from "dayjs/plugin/weekday";
 dayjs.extend(weekday);
+import localeData from "dayjs/plugin/localeData";
+dayjs.extend(localeData);
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek);
 import intersectionWith from "lodash/intersectionWith";
 import differenceWith from "lodash/differenceWith";
 import unionWith from "lodash/unionWith";
@@ -45,7 +49,7 @@ export type DisplayDateSettings = Parameters<typeof displayDate>[1];
 
 export function displayDate(
   date: DateArg,
-  settings?: { format?: DateDisplayFormat; seperator?: "-" | "/" }
+  settings?: { format?: DateDisplayFormat | string; seperator?: "-" | "/" }
 ) {
   if (!date) return "date(?)";
   const sep = settings?.seperator ? settings.seperator : "/";
@@ -88,6 +92,8 @@ export function displayDate(
         return `${dateStr2} (${getDayStr(d2, true)})`;
       case "Time":
         return dayjs(date).format("hh:mma");
+      default:
+        return dayjs(date).format(settings.format);
     }
   } else
     return displayDate(date, {
@@ -123,27 +129,23 @@ export function displayDateRangeF(
 }
 
 export function displayDateRange(
-  start?: DateArg,
-  finish?: DateArg,
+  start?: Dayjs,
+  finish?: Dayjs,
   format?: { start: string; end: string }
 ) {
   let startStr = "?";
   let finishStr = "?";
 
-  const startDayjs = dayjs(start);
-  const finishDayjs = dayjs(finish);
-
   // If both am/pm, only show am/pm on the finish time
-  const showAmOrPmOnStartTime =
-    startDayjs.format("a") !== finishDayjs.format("a");
+  const showAmOrPmOnStartTime = start.format("a") !== finish.format("a");
 
   if (start !== undefined) {
-    startStr = dayjs(start).format(
+    startStr = start.format(
       format ? format.start : `h:mm${showAmOrPmOnStartTime ? "a" : ""}`
     );
   }
   if (finish !== undefined) {
-    finishStr = dayjs(finish).format(format ? format.end : "h:mma");
+    finishStr = finish.format(format ? format.end : "h:mma");
   }
 
   return startStr + " - " + finishStr;
@@ -269,6 +271,13 @@ export const unionDatesByDate = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
 export const diffDates = (xs: Dayjs[], ys: Dayjs[]): Dayjs[] =>
   differenceWith(xs, ys, (x, y) => !compareDates(x, y));
 
+export function mondayOfWeek(d: Dayjs) {
+  return d.isoWeekday(1);
+}
+export function sundayOfWeek(d: Dayjs) {
+  return d.isoWeekday(7);
+}
+
 export function occursWithinTimeWindow(x: {
   windowStart: Dayjs;
   windowEnd: Dayjs;
@@ -279,13 +288,6 @@ export function occursWithinTimeWindow(x: {
     x.candidateStart.isBefore(x.windowEnd) &&
     x.candidateEnd.isAfter(x.windowStart)
   );
-}
-
-export function mondayOfWeek(d: Dayjs) {
-  return d.weekday(1);
-}
-export function sundayOfWeek(d: Dayjs) {
-  return d.weekday(7);
 }
 
 export function listOfDatesBetween(start: Dayjs, end: Dayjs) {

@@ -11,7 +11,7 @@ import intersectionWith from "lodash/intersectionWith";
 import uniqBy from "lodash/fp/uniqBy";
 import groupBy from "lodash/fp/groupBy";
 import { LodashGroupBy1x1 } from "lodash/fp";
-import { keyType, Dict, WithId, WithOptId } from "./types";
+import { MaybeDefined, keyType, Dict, WithId, WithOptId } from "./types";
 import dayjs from "dayjs";
 import { throwDevError } from "./nativeJs";
 
@@ -134,9 +134,8 @@ export function spliceOrPush<T>(
 /**
  * f(x) if x is defined.
  */
-export function applyIfDefined<U, V>(x: U | undefined, f: (x: U) => V) {
-  if (x) return f(x);
-}
+export const applyIfDefined = <U, V>(f: (x: U) => V) => (x: MaybeDefined<U>) =>
+  !isTruthy(x) ? x : f(x);
 
 /**
  * Remove 'keys' from 'o', returning a copy of 'o'.
@@ -223,3 +222,7 @@ export const defineKeysAndGroupBy = <K extends string, T>(
     ...keys.reduce((acc, k) => ({ ...acc, [k]: [] }), {}),
     ...groupBy(f)(x),
   } as Record<K, T[]>);
+
+// Useful for debugging
+export const flowResults = (funcs: ((t: any) => any)[]): any[] =>
+  funcs.reduce((acc, f) => [...acc, f(acc[acc.length - 1])], []);

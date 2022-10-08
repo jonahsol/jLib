@@ -1,3 +1,5 @@
+import { isTruthy } from "../functions";
+
 export function capitaliseFirst(str: string) {
   return str.charAt(0).toLocaleUpperCase() + str.slice(1);
 }
@@ -58,4 +60,7 @@ export function isContentString(str?: string) {
 }
 export function withEllipsis(x: string) {
   return `${x}...`;
+}
+export function asYesNo(x: any) {
+  return isTruthy(x) ? "Yes" : "No";
 }
