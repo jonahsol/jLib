@@ -14,6 +14,7 @@ import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import { lowercaseFirst } from "../string";
 import { toObject } from "../functions";
+import { convertToEvTzDay } from "./timezone";
 
 export const dateStringToDayjs = (
   dateStr: string | undefined
@@ -196,9 +197,9 @@ export function keyByDate<T>(xs: T[], getDate: (t: T) => DateArg) {
   return keyBy<T>(xs, (x) => serialiseDate(toDayjs(getDate(x))));
 }
 
-export const todayDayjs = dayjs().startOf("day");
+export const todayEvTz = convertToEvTzDay(dayjs().startOf("day"));
 export function isToday(m: Dayjs) {
-  return m.startOf("day").diff(todayDayjs) === 0;
+  return dayEqual(m, todayEvTz);
 }
 
 export function datetimeEqual(d1: DateArg, d2: DateArg) {
@@ -213,9 +214,9 @@ export function timeEqual(d1: DateArg, d2: DateArg) {
   const d2d = toDayjs(d2);
 
   return (
-    d1d.hour() === d2d.hour() &&
-    d1d.minute() === d2d.minute() &&
-    d1d.second() === d2d.second()
+    d1d.format("hh") === d2d.format("hh") &&
+    d1d.format("mm") === d2d.format("mm") &&
+    d1d.format("ss") === d2d.format("ss")
   );
 }
 
@@ -224,7 +225,7 @@ export function dayEqual(d1: DateArg, d2: DateArg) {
   const d1d = toDayjs(d1);
   const d2d = toDayjs(d2);
 
-  return d1d.startOf("day").isSame(d2d.startOf("day"));
+  return convertToEvTzDay(d1d).isSame(convertToEvTzDay(d2d));
 }
 export function isBetweenDates(
   date: string | Dayjs,
@@ -255,7 +256,7 @@ export function throwIfNotAfter(d1: Dayjs, d2: Dayjs) {
 
 export const compareDates = (d1: Dayjs, d2: Dayjs) => d1.diff(d2);
 export const diffByTimeOfDay = (d1: Dayjs, d2: Dayjs) =>
-  addTimeOfDay(todayDayjs, d1).diff(addTimeOfDay(todayDayjs, d2));
+  addTimeOfDay(todayEvTz, d1).diff(addTimeOfDay(todayEvTz, d2));
 export const diffByDate = (d1: Dayjs, d2: Dayjs) =>
   d1.startOf("day").diff(d2.startOf("day"));
 
