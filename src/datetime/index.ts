@@ -237,8 +237,8 @@ export function isBetweenDates(
   const dEnd = toDayjs(end);
 
   return (
-    (dayEqual(dDate, dDate) || dStart.isBefore(dDate)) &&
-    (dayEqual(dDate, dEnd) || dEnd.isAfter(dDate))
+    (dayEqual(dStart, dDate) || dStart.isBefore(dDate)) &&
+    (dayEqual(dEnd, dDate) || dEnd.isAfter(dDate))
   );
 }
 
