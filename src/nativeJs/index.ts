@@ -7,8 +7,6 @@ export function getScrollToElementId(id: string) {
 }
 // Same argument as `getScrollToElementId`
 export function scrollTo(id: string) {
-  const x = getScrollToElementId(id);
-  const y = document.getElementById(x);
   document.getElementById(getScrollToElementId(id)).scrollIntoView({
     behavior: "smooth",
     block: "start",
@@ -20,6 +18,11 @@ export function throwDevError(message?: string) {
 }
 export function throwUnimplementedException(message?: string) {
   throw new Error(`Unimplemented exception${message ? `: ${message}` : ""}`);
+}
+export function assert(condition: boolean, message?: string) {
+  if (!condition) {
+    throw new Error(`Assertion failed${message ? `: ${message}` : ""}`);
+  }
 }
 
 export const dateInputDayjsFormat = "YYYY-MM-DD";

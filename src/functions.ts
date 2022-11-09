@@ -48,16 +48,14 @@ export const toObject = <T extends object>(x?: T): T | {} => (x ? x : {});
 export function diff(
   object: Dict<any>,
   base: object,
-  isEq?: (objectValue: any, baseValue: any, key: string) => boolean,
+  isEq: (objectValue: any, baseValue: any, key: string) => boolean = isEqual,
   ignoreRecurse?: (key: string, value: any) => boolean
 ): object {
-  const equal = isEq || ((x, y, key) => isEqual(x, y));
-
   function changes(object: Dict<any>, base: object): object {
     return transform(object, function (result, value, key) {
       // If `object[key] != base[key]`, return an object with
       // { [key]: object[key] }
-      if (!equal(value, base[key], key)) {
+      if (!isEq(value, base[key], key)) {
         result[key] =
           isObject(value) &&
           isObject(base[key]) &&
