@@ -11,7 +11,14 @@ import intersectionWith from "lodash/intersectionWith";
 import uniqBy from "lodash/fp/uniqBy";
 import groupBy from "lodash/fp/groupBy";
 import { LodashGroupBy1x1 } from "lodash/fp";
-import { MaybeDefined, keyType, Dict, WithId, WithOptId } from "./types";
+import {
+  MaybeDefined,
+  keyType,
+  Dict,
+  WithId,
+  WithOptId,
+  MaybeFalsey,
+} from "./types";
 import dayjs from "dayjs";
 import { throwDevError } from "./nativeJs";
 
@@ -30,7 +37,8 @@ export function toArray<T>(xs: T | T[] | undefined) {
  *
  * Useful for spreading.
  */
-export const toObject = <T extends object>(x?: T): T | {} => (x ? x : {});
+export const toObject = <T extends object>(x?: MaybeFalsey<T>): T | {} =>
+  x ? x : {};
 
 /**
  * With thanks: https://gist.github.com/Yimiprod/7ee176597fef230d1451
