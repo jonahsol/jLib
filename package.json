@@ -13,6 +13,7 @@
     "dayjs": "1.9.3",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
+    "react": "^18.2.0",
     "zustand": "3.6.7"
   },
   "devDependencies": {
